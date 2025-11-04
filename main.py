@@ -48,20 +48,42 @@ def display_all_movies(conn):
 def update_movie_rating(conn, title, new_rating):
     cursor = conn.cursor()
     cursor.execute('''
-                   UPDATE title
+                   UPDATE movies
                    SET rating = ?
-                   WHERE title = ?''')
+                   WHERE title = ?'''
+                   , (new_rating, title))
 
     # TODO: Update the rating of a specified movie
     conn.commit()
 
 def delete_movie(conn, title):
+    cursor = conn.cursor()
+    cursor.execute('''
+                   DELETE FROM movies
+                   WHERE title = ?
+                   ''', (title, ))
+    conn.commit()
     # TODO: Delete a specified movie from the database
-    pass
 
 def find_movies_by_director(conn, director):
+    cursor = conn.cursor()
+    cursor.execute('''
+        SELECT title, director, year, rating
+        FROM movies
+        WHERE director = ?
+    ''', (director,))
+    
+    movies = cursor.fetchall()
+    if movies:
+        print(f"\nMovies directed by {director}:")
+        for movie in movies:
+            print(movie)
+    else:
+        print(f"\nNo movies found for director: {director}")
+
+    conn.commit()
     # TODO: Find and display all movies by a specific director
-    pass
+
 
 def main():
     conn = create_connection()
